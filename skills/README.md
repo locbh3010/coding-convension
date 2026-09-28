@@ -6,7 +6,7 @@ Mục đích: **Chỉ cần sao chép thư mục `skills/` (hoặc skill cần d
 
 ---
 
-## 📦 Danh mục Skills
+## Danh mục Skills
 
 | Skill Name | Thư mục | Mục đích & Khi nào sử dụng |
 |---|---|---|
@@ -17,7 +17,7 @@ Mục đích: **Chỉ cần sao chép thư mục `skills/` (hoặc skill cần d
 
 ---
 
-## 🚀 Hướng dẫn Đồng bộ vào Dự án Mới
+## Hướng dẫn Đồng bộ vào Dự án Mới
 
 ### 1. Dùng cho Claude Code CLI
 Sao chép thư mục `skills/` vào thư mục cấu hình của Claude Code trong dự án:

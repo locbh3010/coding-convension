@@ -111,13 +111,13 @@ packages/ui/
 - Bắt buộc kiểm tra **Authentication/Session** ngay đầu hàm Server Action.
 - Bắt buộc validate dữ liệu đầu vào bằng Zod schema từ `@repo/types` trước khi thực thi nghiệp vụ:
   ```ts
-  // ❌ NGUY HIỂM: Tin tưởng client gửi id và role
+  // [BAD] NGUY HIỂM: Tin tưởng client gửi id và role
   export async function updateUserAction(formData: FormData) {
     'use server';
     await db.user.update(...);
   }
 
-  // ✅ CHUẨN: Xác thực session và validate input
+  // [GOOD] CHUẨN: Xác thực session và validate input
   export async function updateUserAction(input: unknown) {
     'use server';
     const session = await auth();

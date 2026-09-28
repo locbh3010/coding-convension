@@ -69,9 +69,9 @@ Không đặt business logic của một module cụ thể vào `common/` chỉ 
 Ví dụ:
 
 ```text
-❌ common/cart-price.ts
+[BAD] common/cart-price.ts
 
-✅ modules/cart/utils/calculate-price.ts
+[GOOD] modules/cart/utils/calculate-price.ts
 ```
 
 ---
@@ -179,10 +179,10 @@ Validation strategy có thể dùng package/framework phù hợp với project.
 - Function có nhiều input nên ưu tiên object parameter.
 
 ```ts
-// ❌
+// [BAD]
 createUser(name, email, age, role)
 
-// ✅
+// [GOOD]
 createUser({
   name,
   email,

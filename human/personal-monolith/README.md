@@ -1,6 +1,6 @@
 # Monolith Engineering Guidelines (Dự án Cá nhân & Freelancer)
 
-## 🎯 Định hướng & Mục tiêu
+## Định hướng & Mục tiêu
 
 Bộ tài liệu này là quy chuẩn kỹ thuật dành riêng cho **Developer cá nhân hoặc Freelancer** làm việc trên các dự án độc lập (**Single / Monolith Repository**) với Next.js (Frontend) hoặc NestJS (Backend).
 
@@ -13,7 +13,7 @@ Khi làm việc độc lập hoặc nhận dự án outsource/freelance, bạn k
 
 ---
 
-## 📂 Danh mục Quy chuẩn
+## Danh mục Quy chuẩn
 
 | File | Nội dung chính |
 |---|---|
@@ -28,7 +28,7 @@ Khi làm việc độc lập hoặc nhận dự án outsource/freelance, bạn k
 
 ---
 
-## 🛠️ Tooling Baseline
+## Tooling Baseline
 
 - `npm`
 - `ESLint` & `Prettier`

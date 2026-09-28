@@ -106,13 +106,13 @@ PR nên được tạo sau khi:
 - Lint / typecheck / build / test phù hợp đã pass.
 - Husky checks pass.
 
-PR description nên có:
+PR description bắt buộc tuân theo **Sample GitHub PR Template** và thỏa mãn **Checklist Rule** được quy định chi tiết tại [`git-rules.md`](git-rules.md#62-sample-github-pull-request-template):
 
-- Mục tiêu / problem.
-- Nội dung thay đổi chính.
-- Jira Task.
-- Testing / verification.
-- Screenshot / evidence nếu applicable.
+- Gắn Jira Task link hợp lệ.
+- Tóm tắt mục tiêu và nội dung thay đổi chính.
+- Xác nhận đã cập nhật Living Tech Doc trong `docs/tech/` (nếu đổi logic/API/architecture).
+- Xác nhận đã tạo file `.changeset/*.md`.
+- Đính kèm bằng chứng (screenshot, video, test log).
 
 ## 7. CI & Review
 

@@ -129,12 +129,13 @@ Một file nên có **một trách nhiệm chính / một concern chính**.
 Tránh gom tất cả vào một file:
 
 ```text
-❌ component
-❌ type / interface
-❌ hooks
-❌ constants
-❌ validation
-❌ business logic
+[KHONG GOM CHUNG]
+- component
+- type / interface
+- hooks
+- constants
+- validation
+- business logic
 ```
 
 Thay vào đó, tách theo responsibility.
@@ -227,10 +228,10 @@ Chọn cách phù hợp với use case, không chọn chỉ vì convention.
 Khi function nhận nhiều parameters có quan hệ với nhau, ưu tiên object parameter.
 
 ```ts
-// ❌
+// [BAD]
 createUser(name, email, age, role)
 
-// ✅
+// [GOOD]
 createUser({
   name,
   email,

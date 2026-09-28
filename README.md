@@ -8,7 +8,7 @@ Tất cả quy chuẩn được phân loại thành 2 nhóm đối tượng sử
 
 ---
 
-## 📂 Danh mục Quy chuẩn Kỹ thuật (`human/`)
+## Danh mục Quy chuẩn Kỹ thuật (`human/`)
 
 ### 1. [Personal Monolith Guidelines](human/personal-monolith/README.md) (`human/personal-monolith/`)
 Quy chuẩn dành cho **Developer cá nhân hoặc Freelancer** làm việc trên các repository độc lập:
@@ -27,7 +27,7 @@ Quy chuẩn dành cho **Monorepo Cá nhân** (sử dụng **Turborepo** và **np
 
 ---
 
-## 🤖 AI Agent Skills ([`skills/`](skills/README.md))
+## AI Agent Skills ([`skills/`](skills/README.md))
 
 Toàn bộ quy chuẩn trên được đóng gói thành các **AI Agent Skills chuẩn hóa** (Agent Skills format) để copy trực tiếp vào dự án:
 - `skills/personal-monolith-conventions/`: Kỹ năng code monolith cho cá nhân/freelance.

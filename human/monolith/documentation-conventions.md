@@ -15,7 +15,7 @@ Tài liệu này định nghĩa hệ thống **Technical Documentation**, **Rele
 | **Vòng đời** | Cố định theo Task/PRD (ít sửa sau khi đã bàn giao). | **Living Documentation** (Cập nhật liên tục mỗi khi code thay đổi). | Append-only (Ghi nhận một lần tại thời điểm release). |
 | **Nơi lưu trữ** | **Bên ngoài repo** (Jira, Confluence, Figma). **TUYỆT ĐỐI KHÔNG LƯU TRONG REPO**. | **Trong repo**: `docs/tech/` | **Trong repo**: `docs/release-notes/` |
 
-> 🚫 **QUY TẮC CỐT LÕI: KHÔNG LƯU SPECS TRONG CODEBASE**
+> **[QUY TẮC CỐT LÕI] KHÔNG LƯU SPECS TRONG CODEBASE**
 > 
 > Trong repository **chỉ lưu trữ Tài liệu Kỹ thuật (`docs/tech/`)** và **Nhật ký phát hành (`docs/release-notes/`)**. 
 > - **Tuyệt đối không tạo thư mục lưu Specs (như `docs/specs/`, PRD, User Stories) bên trong repository**. 

@@ -13,7 +13,7 @@ Tài liệu này định nghĩa hệ thống **Technical Documentation** và **R
 | **Tính cập nhật** | Xem lại khi làm tính năng. | **Living Documentation** (Cập nhật đồng thời khi sửa code). | Append-only (Ghi một lần tại thời điểm release/bàn giao). |
 | **Nơi lưu trữ** | **Bên ngoài repo** (Notion, Figma, Email khách, Trello). **TUYỆT ĐỐI KHÔNG LƯU TRONG REPO**. | **Trong repo**: `docs/tech/` | **Trong repo**: `docs/release-notes/` |
 
-> 🚫 **QUY TẮC CỐT LÕI: KHÔNG LƯU SPECS TRONG CODEBASE**
+> **[QUY TẮC CỐT LÕI] KHÔNG LƯU SPECS TRONG CODEBASE**
 > 
 > Trong repository **chỉ lưu trữ Tài liệu Kỹ thuật (`docs/tech/`)** và **Nhật ký phát hành (`docs/release-notes/`)**. 
 > - **Tuyệt đối không lưu trữ Specs, PRD, User Stories, biên bản họp khách hàng bên trong repository**. 

@@ -1,6 +1,6 @@
 # Monorepo Engineering Guidelines (Dự án Cá nhân)
 
-## 🎯 Định hướng & Mục tiêu
+## Định hướng & Mục tiêu
 
 Bộ tài liệu này là quy chuẩn kỹ thuật cho dự án **Monorepo Cá nhân (Personal / Indie Project)** sử dụng **Turborepo** và **npm workspaces**.
 
@@ -12,7 +12,7 @@ Khác với quy trình rườm rà của doanh nghiệp lớn (không Jira ticke
 
 ---
 
-## 📂 Danh mục Tài liệu
+## Danh mục Tài liệu
 
 | File | Nội dung chính |
 |---|---|
@@ -28,7 +28,7 @@ Khác với quy trình rườm rà của doanh nghiệp lớn (không Jira ticke
 
 ---
 
-## 🛠️ Tooling Baseline
+## Tooling Baseline
 
 - **Package Manager**: `npm` (sử dụng **npm workspaces** mặc định, không cần cài thêm pnpm/yarn).
 - **Monorepo Build System**: **Turborepo** (`turbo` by Vercel).

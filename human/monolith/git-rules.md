@@ -106,18 +106,68 @@ git push --force
 
 Không force push protected/shared branch.
 
-## 6. Pull Request Rules
+## 6. Pull Request & GitHub Conventions (Sample & Checklist Rule)
 
-PR phải:
+### 6.1. Quy tắc PR Bắt buộc
+- PR phải trỏ đúng source branch và target branch (`feature/*` → `develop`, `hotfix/*` → `main`).
+- Bắt buộc gắn Jira Task link tương ứng trong tiêu đề và nội dung.
+- Tiêu đề PR phải tuân theo chuẩn Conventional Commits: `<type>(<scope>): <short-description>`.
+- Bắt buộc cập nhật tài liệu kỹ thuật trong `docs/tech/` nếu PR có thay đổi kiến trúc/logic/API.
+- Bắt buộc chạy `npx changeset` nếu PR có thay đổi code runtime.
+- Phải pass 100% các automated CI checks và có ít nhất 1 approval từ Reviewer.
 
-- Có đúng source branch và target branch.
-- Gắn Jira Task tương ứng.
-- Có description rõ ràng.
-- Có testing / verification.
-- Có screenshot/evidence khi UI hoặc behavior cần chứng minh.
-- Pass required CI checks.
-- Có required reviewer approval.
-- Không còn required review comments.
+### 6.2. Sample GitHub Pull Request Template
+Mọi repository Monolith của team nên thiết lập file `.github/pull_request_template.md` theo mẫu chuẩn hóa dưới đây để developer sử dụng khi mở PR:
+
+```markdown
+### Jira Task
+- Link Task: [PHI-XXX](https://jira.company.com/browse/PHI-XXX)
+
+---
+
+### Mô tả Thay đổi (Description)
+<!-- Tóm tắt ngắn gọn mục tiêu của PR: Giải quyết bài toán gì hoặc thêm tính năng nào? -->
+
+---
+
+### Loại Thay đổi (Type of Change)
+- [ ] `feat`: Tính năng mới
+- [ ] `fix`: Sửa lỗi
+- [ ] `refactor`: Tái cấu trúc mã nguồn (không đổi logic bên ngoài)
+- [ ] `perf`: Tối ưu hiệu năng
+- [ ] `chore`: Cập nhật cấu hình, dependencies, tooling
+
+---
+
+### Standardize Tech Doc & Changeset (Bắt buộc)
+- [ ] **Living Tech Doc**: Đã cập nhật tài liệu kỹ thuật tương ứng trong `docs/tech/` nếu PR làm thay đổi kiến trúc, data flow, API contract hoặc logic nghiệp vụ.
+- [ ] **Không lưu Specs**: Đã kiểm tra và đảm bảo TUYỆT ĐỐI KHÔNG lưu specs, PRD, user stories vào repository (chỉ lưu tại Jira/Confluence).
+- [ ] **Changeset**: Đã chạy `npx changeset` và commit file `.changeset/*.md` (bắt buộc đối với thay đổi runtime, fix bug hoặc tính năng mới).
+
+---
+
+### Hướng dẫn Triển khai & Triệu chứng Kỹ thuật
+- [ ] **Environment Variables**: Có thêm biến môi trường mới không? (Nếu có: đã cập nhật `.env.example` và boot-time validation).
+- [ ] **Database Migration**: Có thay đổi database model không? (Nếu có: đã đính kèm file migration và tuân thủ tính bất biến).
+- [ ] **Breaking Changes**: Có thay đổi nào làm gãy API contract giữa FE và BE không?
+
+---
+
+### Checklist Rule Tự Kiểm tra & Bằng chứng
+- [ ] `npm run lint` PASS không có lỗi.
+- [ ] `npm run build` PASS trên máy cục bộ không lỗi type/syntax.
+- [ ] Đã self-test các kịch bản chính và edge cases.
+- [ ] Đính kèm bằng chứng (Ảnh chụp màn hình / Video / Test log):
+  <!-- Đính kèm ảnh hoặc log tại đây -->
+```
+
+### 6.3. Checklist Rule Nghiệm thu PR (Reviewer Gates)
+Reviewer chỉ Approve PR khi đã tick đủ các chốt chặn:
+1. **Tech Doc Parity Rule**: Diff của code phải đi kèm diff của `docs/tech/` tương ứng (nếu có đổi logic/contract). Nếu code đổi mà doc không đổi → **Block PR**.
+2. **Zero Specs Rule**: Không có file PRD, acceptance criteria nào được commit vào repo.
+3. **Changeset Rule**: File `.changeset/*.md` có mặt và chọn đúng mức SemVer (`patch`, `minor`, `major`).
+4. **Migration Immutability Rule**: File migration mới không sửa đè lên migration cũ đã merge.
+5. **Quality Gate**: Toàn bộ CI checks (lint, test, build) đều xanh 100%.
 
 ## 7. Branch Protection
 
