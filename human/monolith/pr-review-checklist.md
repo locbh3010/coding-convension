@@ -8,7 +8,6 @@ Không review thủ công những vấn đề đã được CI/tooling kiểm tr
 
 ## 1. Requirement & Scope
 
-- [ ] PR đúng Jira Task / Acceptance Criteria.
 - [ ] Change giải quyết đúng problem cần giải quyết.
 - [ ] Scope rõ ràng, không có unrelated change hoặc refactor không cần thiết.
 - [ ] PR description đủ thông tin để hiểu change.

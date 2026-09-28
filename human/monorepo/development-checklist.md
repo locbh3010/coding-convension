@@ -1,70 +1,62 @@
-# Monorepo Development Checklist
+# Monorepo Development Checklist (Dự án Cá nhân)
 
-Checklist này dành cho **Developer** trước khi tạo hoặc cập nhật Pull Request trong hệ thống **Monorepo**.
-
----
-
-## 1. Requirement & Monorepo Scope
-
-- [ ] Hiểu rõ Task và phạm vi tác động (chỉ ảnh hưởng `apps/*` hay tác động cả `packages/*`).
-- [ ] Không sửa đổi các app/package không liên quan trong cùng một PR.
-- [ ] Tên branch tuân thủ format có scope: `<prefix>/<task-id>-<scope>-<short-description>`.
+Checklist này dành cho bạn tự kiểm tra nhanh trước khi merge code vào nhánh chính trong **Monorepo Cá nhân**.
 
 ---
 
-## 2. Dependency & Workspace Integrity (Chống Phantom Dependencies)
+## 1. Phạm vi & Tên nhánh
 
-- [ ] Mọi package được import đều đã khai báo trực tiếp trong `package.json` của app/package tương ứng (không phụ thuộc vào hoisting lên root).
-- [ ] Không có circular dependencies giữa các package nội bộ.
+- [ ] Tên nhánh ngắn gọn, đúng format có scope: `<type>/<scope>-<short-description>` (ví dụ: `feat/web-auth`, `fix/api-jwt`).
+- [ ] Không commit dính các thay đổi thử nghiệm ở các app không liên quan.
+
+---
+
+## 2. Ranh giới Gói & Dependencies (Chống Lỗi Hoisting)
+
+- [ ] Thư viện bên ngoài được cài vào đúng workspace của app sử dụng nó (`npm i <pkg> --workspace=apps/<app>`), không cài vào root.
+- [ ] Mọi thư viện được import đều đã khai báo trực tiếp trong `package.json` của app đó (không dùng lậu dependency của app khác do npm hoisting).
 - [ ] `packages/*` không import bất kỳ file nào từ `apps/*`.
-- [ ] `apps/*` không import trực tiếp từ một app khác.
-- [ ] Nếu thêm package ngoài mới, chỉ cài đặt vào đúng workspace cần dùng (`npm i <pkg> --workspace=<path>`), không cài vào root trừ tooling repo.
+- [ ] `apps/*` không import chéo nhau.
 
 ---
 
-## 3. Security — Priority 1
+## 3. An ninh & Bảo vệ Secret
 
-- [ ] Không commit file `.env` hoặc để lộ credentials của Backend sang Frontend hoặc shared packages.
-- [ ] Các biến môi trường mới đã được khai báo vào file `.env.example` của app tương ứng và có boot-time validation.
-- [ ] Next.js Server Actions có kiểm tra authentication/session và validate input bằng Zod schema.
-- [ ] NestJS Controllers có DTO validation; ứng dụng đã cấu hình `ValidationPipe` whitelist chống Mass Assignment.
-- [ ] Không truyền dữ liệu nhạy cảm qua client bundle hoặc log server.
+- [ ] Không vô tình commit `.env` hoặc để lộ Secret của Backend (Database URL, Stripe Secret, AI API Keys) sang Frontend hoặc shared packages.
+- [ ] Biến môi trường mới đã được ghi chú vào `.env.example` của app tương ứng.
+- [ ] Next.js Server Actions có kiểm tra authentication và validate Zod schema.
+- [ ] NestJS Controllers có DTO validation và được bảo vệ bởi ValidationPipe whitelist.
 
 ---
 
-## 4. Turborepo & Build Cache Integrity
+## 4. Kiểm tra Nhanh với Turborepo (Trước khi Merge)
 
-- [ ] Lệnh build toàn bộ affected packages chạy thành công cục bộ:
+Chạy lệnh kiểm tra tự động cho các phần bị ảnh hưởng:
+```bash
+# 1. Typecheck & Lint
+npx turbo run lint typecheck --filter=...[origin/main]
+
+# 2. Build thử nghiệm
+npx turbo run build --filter=...[origin/main]
+```
+- [ ] Cả 2 lệnh trên đều PASS 100%, không có lỗi đỏ.
+
+---
+
+## 5. Database & API Contract (Nếu có)
+
+- [ ] Nếu sửa model database (`packages/database`), đã chạy CLI sinh migration tương ứng:
   ```bash
-  npx turbo run build --filter=...[origin/develop]
+  npm run db:migrate:dev --workspace=@repo/database
   ```
-- [ ] `typecheck` và `lint` đều pass trên mọi package bị ảnh hưởng:
-  ```bash
-  npx turbo run lint typecheck --filter=...[origin/develop]
-  ```
-- [ ] Nếu thêm task mới hoặc thay đổi đường dẫn build, `turbo.json` đã cập nhật đúng `outputs` và `dependsOn`.
+- [ ] Nếu sửa API payload, đã cập nhật schema trong `@repo/types` và cả Frontend lẫn Backend đều compile TypeScript thành công.
 
 ---
 
-## 5. Database & Shared Contracts (Nếu có)
+## 6. Git Hygiene & Changeset
 
-- [ ] Thay đổi database schema nằm trong `packages/database` và đi kèm file migration tương ứng.
-- [ ] File migration tuân thủ nguyên tắc bất biến (không sửa migration cũ đã merge).
-- [ ] Contract API (`@repo/types`) được cập nhật đồng bộ, và cả Frontend lẫn Backend đều compile TypeScript thành công.
-
----
-
-## 6. Git & PR Hygiene
-
-- [ ] Commit messages tuân thủ đúng format có scope: `<type>(<scope>): <short-description>` (ví dụ: `feat(web): ...`, `fix(api): ...`).
-- [ ] Kiểm tra `git status` và `git diff --staged` để chắc chắn không stage nhầm file từ các app khác.
-- [ ] PR description chỉ rõ các app/package chịu ảnh hưởng và hướng dẫn test cụ thể.
-
----
-
-## 7. Documentation & Changesets (Monorepo)
-
-- [ ] **Living Tech Docs**: Nếu PR thay đổi ranh giới app/package, pipeline `turbo.json`, API contract (`@repo/types`) hoặc database schema (`@repo/database`), file tương ứng trong `docs/tech/` (`apps/`, `packages/`, `architecture/`) đã được cập nhật đồng bộ.
-- [ ] **Multi-package Changeset**: Đã chạy `npx changeset`, tích chọn đúng tất cả các app/package bị thay đổi và chọn mức SemVer (`patch`/`minor`/`major`) tương ứng.
-- [ ] **Release Notes**: Nếu PR là release milestone, đã tạo/cập nhật file trong `docs/release-notes/` kèm breakdown chi tiết từng app/package.
+- [ ] `git status` và `git diff --staged` sạch sẽ, chỉ chứa file của tính năng đang làm.
+- [ ] Commit message có scope: `<type>(<scope>): <short-description>`.
+- [ ] Nếu thay đổi kiến trúc hoặc logic lớn, đã cập nhật nhanh tài liệu tương ứng trong `docs/tech/`.
+- [ ] Đã chạy `npx changeset` nếu đây là thay đổi tính năng/bugfix cần theo dõi version.
 EOF

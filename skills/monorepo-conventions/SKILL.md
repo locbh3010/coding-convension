@@ -71,10 +71,10 @@ This skill defines the standards for multi-package and multi-application reposit
 
 ---
 
-## 6. Git Flow & Monorepo Scopes
+## 6. Git Flow & Monorepo Scopes (Personal Projects)
 
-- **Branch Naming**: Must include workspace scope:
-  `<prefix>/<task-id>-<scope>-<short-description>` (e.g. `feature/phi-101-web-checkout`).
+- **Branch Naming**: Scope-based without enterprise task IDs:
+  `<type>/<scope>-<short-description>` (e.g. `feat/web-checkout`, `fix/api-jwt`, `chore/ui-button`, `feat/worker-ai-pipeline`).
 - **Conventional Commits**: Scope must be an app/package name:
   - `feat(web): add cart drawer`
   - `fix(api): handle token expiration`
@@ -83,8 +83,9 @@ This skill defines the standards for multi-package and multi-application reposit
 - **Blast Radius Awareness**:
   - Changes to `apps/*`: Low risk (isolated).
   - Changes to `packages/types` or `packages/database`: Critical risk. Must run `turbo run typecheck test` across all consuming apps.
-- **Affected-Only CI**:
+- **Affected-Only Check**:
   ```bash
-  npx turbo run lint typecheck test build --filter=...[origin/develop]
+  npx turbo run lint typecheck test build --filter=...[origin/main]
   ```
-EOF
+- **Self-Merge Strategy**: Always use **Squash and Merge** into `main` to preserve a clean, linear git history.
+

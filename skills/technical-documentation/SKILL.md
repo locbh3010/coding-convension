@@ -11,13 +11,18 @@ This skill defines the standards for creating, updating, and maintaining living 
 
 ## 1. Distinction: Tech Docs vs Specs vs Release Notes
 
-| Area | Purpose | Content | Lifecycle |
+| Area | Purpose | Content | Storage Location |
 |---|---|---|---|
-| **Specs** | What the product *requires* | Business rules, user stories, acceptance criteria | Fixed per feature/task |
-| **Tech Docs** (`docs/tech/`) | How the system is *actually implemented* | Architecture, data flow, module boundaries, error handling, constraints | **Living** (Updated in same PR as code) |
-| **Release Notes** (`docs/release-notes/`) | What changed, when, why, and impact | Metadata, bug fixes, features, migrations, env vars, Changeset ID | Append-only per deployment |
+| **Specs** | What the product *requires* | Business rules, user stories, acceptance criteria | **OUTSIDE repo** (Jira, Confluence, Linear). **NEVER store specs in the repository**. |
+| **Tech Docs** (`docs/tech/`) | How the system is *actually implemented* | Architecture, data flow, module boundaries, error handling, constraints | **Inside repo**: `docs/tech/` (Living docs) |
+| **Release Notes** (`docs/release-notes/`) | What changed, when, why, and impact | Metadata, bug fixes, features, migrations, env vars, Changeset ID | **Inside repo**: `docs/release-notes/` (Append-only) |
 
-> 🔴 **Hard Rule**: Tech Docs describe the **Current Implementation**, not future aspirations or business requirements. Never duplicate Specs into Tech Docs.
+> 🚫 **Hard Rule: NEVER STORE SPECS IN THE REPOSITORY**
+> 
+> The codebase must only store **Technical Documentation (`docs/tech/`)** and **Release Notes (`docs/release-notes/`)**.
+> - Do NOT create `docs/specs/` or commit PRD / User Stories / Acceptance Criteria inside the repository.
+> - Specs belong strictly to external PM tools (Jira, Confluence, Linear, Notion, Figma).
+> - Tech Docs describe the **Current Implementation** (how code actually runs).
 
 ---
 

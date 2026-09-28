@@ -1,148 +1,116 @@
-# Documentation Conventions & Release Notes (Monorepo)
+# Documentation & Release Conventions (Dự án Cá nhân)
 
-Tài liệu này định nghĩa hệ thống **Technical Documentation**, **Release Notes** và quy trình **Changesets** chuẩn hóa cho các dự án **Monorepo** (sử dụng Turborepo và npm workspaces).
+Tài liệu này định nghĩa hệ thống **Technical Documentation**, **Release Notes** và quy trình **Changesets** tinh gọn cho **Monorepo Cá nhân** (Turborepo + npm workspaces).
 
 ---
 
-## 1. Triết lý: Tech Docs vs Specs vs Release Notes trong Monorepo
+## 1. Triết lý: Tech Docs vs Specs vs Release Notes
 
-| Tiêu chí | Specs (Đặc tả yêu cầu) | Tech Docs (Tài liệu kỹ thuật) | Release Notes (Nhật ký phát hành) |
+| Tiêu chí | Specs (Đặc tả ý tưởng/sản phẩm) | Tech Docs (Tài liệu kỹ thuật) | Release Notes (Nhật ký phát hành) |
 |---|---|---|---|
-| **Câu hỏi cốt lõi** | *"Yêu cầu nghiệp vụ cần gì?"* | *"Monorepo hiện tại đang chạy như thế nào?"* | *"Apps và packages nào vừa thay đổi, tại sao?"* |
-| **Phạm vi** | Mô tả tính năng từ góc nhìn người dùng/sản phẩm (PRD, Acceptance Criteria). | Hiện trạng kiến trúc, ranh giới `apps/` và `packages/`, data flow giữa FE và BE, schema DB. | Ghi nhận chi tiết từng đợt deploy/release của từng app hoặc package nội bộ. |
-| **Tính cập nhật** | Cố định theo milestone. | **Living Documentation** (Cập nhật đồng thời trong PR làm thay đổi code). | Append-only theo từng lần release/version bump. |
-| **Vị trí lưu** | Jira / Confluence / `docs/specs/` | `docs/tech/` | `docs/release-notes/` |
+| **Câu hỏi cốt lõi** | *"Mình muốn sản phẩm làm được gì?"* | *"Monorepo hiện tại đang chạy như thế nào?"* | *"Apps và packages nào vừa được cập nhật, tại sao?"* |
+| **Bản chất** | Ý tưởng, checklist tính năng, user flow, wireframe phác thảo. | Hiện trạng kiến trúc thực tế, ranh giới `apps/` và `packages/`, data flow giữa FE và BE, schema DB. | Ghi nhận chi tiết từng đợt deploy/release của từng app hoặc package nội bộ. |
+| **Tính cập nhật** | Đọc tham khảo khi lên ý tưởng. | **Living Documentation** (Cập nhật đồng thời khi sửa code). | Append-only theo từng lần release/version bump. |
+| **Nơi lưu trữ** | **Bên ngoài repo** (Notion, Linear, GitHub Issues, Figma). **TUYỆT ĐỐI KHÔNG LƯU TRONG REPO**. | **Trong repo**: `docs/tech/` | **Trong repo**: `docs/release-notes/` |
+
+> 🚫 **QUY TẮC CỐT LÕI: KHÔNG LƯU SPECS TRONG CODEBASE**
+> 
+> Trong repository **chỉ lưu trữ Tài liệu Kỹ thuật (`docs/tech/`)** và **Nhật ký phát hành (`docs/release-notes/`)**. 
+> - **Tuyệt đối không lưu trữ Specs, PRD, User Stories bên trong repository**. 
+> - Mọi ý tưởng nghiệp vụ hãy lưu tại công cụ ghi chú cá nhân (Notion, Linear, Apple Notes). 
+> - Tech Docs chỉ tập trung mô tả **mã nguồn thực tế đang chạy** (Current Implementation).
 
 ---
 
-## 2. Cấu trúc thư mục chuẩn (`docs/`) trong Monorepo
-
-Do Monorepo chứa nhiều ứng dụng và nhiều package nội bộ, cấu trúc tài liệu kỹ thuật phản ánh rõ ràng cấu trúc của workspace:
+## 2. Cấu trúc Thư mục Kỹ thuật Chuẩn (`docs/`) trong Monorepo
 
 ```text
 docs/
 ├── tech/
-│   ├── README.md                   # Sơ đồ và bản đồ tra cứu toàn bộ monorepo
-│   ├── DOCUMENTATION-GUIDELINES.md # Quy chuẩn viết, duy trì và cập nhật tài liệu
+│   ├── README.md                   # Sơ đồ tổng quan toàn bộ monorepo
+│   ├── DOCUMENTATION-GUIDELINES.md # Hướng dẫn viết và duy trì tài liệu
 │   ├── architecture/
 │   │   ├── workspace-graph.md      # Biểu đồ quan hệ giữa apps và packages
-│   │   └── turbo-pipelines.md      # Quy hoạch task pipelines và chiến lược caching
+│   │   └── turbo-pipelines.md      # Cấu hình tasks và caching trong turbo.json
 │   ├── apps/
-│   │   ├── web.md                  # Hiện trạng kỹ thuật Next.js Customer Web
-│   │   ├── admin.md                # Hiện trạng kỹ thuật Next.js Admin Dashboard
-│   │   ├── api.md                  # Hiện trạng kỹ thuật NestJS Main API
-│   │   └── worker.md               # Hiện trạng kỹ thuật NestJS Background Worker
+│   │   ├── web.md                  # Hiện trạng Next.js Customer Web
+│   │   ├── admin.md                # Hiện trạng Next.js Admin Dashboard (nếu có)
+│   │   ├── api.md                  # Hiện trạng NestJS Main API
+│   │   └── worker.md               # Hiện trạng NestJS Background Worker (BullMQ)
 │   ├── packages/
-│   │   ├── ui.md                   # Design System, components và Tailwind tokens
-│   │   ├── database.md             # Prisma/TypeORM schema, relations và migrations
-│   │   ├── types.md                # Shared DTOs, Envelopes, Domain Error Codes
-│   │   └── configs.md              # Shared ESLint, Prettier và TypeScript configs
-│   ├── features/                   # Luồng kỹ thuật End-to-End xuyên suốt FE & BE (auth, order)
-│   ├── technologies/               # Các công nghệ thực tế đang sử dụng và lý do
-│   ├── integrations/               # Các tích hợp bên thứ 3 (OAuth, Payment, S3, Email)
-│   └── decisions/                  # Architecture Decision Records (ADRs) của monorepo
+│   │   ├── ui.md                   # Shared UI components và design tokens
+│   │   ├── database.md             # Prisma schema, quan hệ và migrations
+│   │   ├── types.md                # Shared DTOs, API envelopes, validation schemas
+│   │   └── configs.md              # Shared ESLint và TypeScript configs
+│   ├── features/                   # Luồng kỹ thuật các tính năng lớn (gen-image, billing)
+│   ├── technologies/               # Các công nghệ thực tế đang sử dụng
+│   ├── integrations/               # Tích hợp bên thứ 3 (Fal.ai, Stripe, R2/S3)
+│   └── decisions/                  # Ghi nhận các quyết định kiến trúc lớn (ADRs)
 └── release-notes/
     ├── README.md                   # Nhật ký tổng hợp các đợt phát hành
-    ├── TEMPLATE.md                 # Mẫu chuẩn ghi nhận release note
+    ├── TEMPLATE.md                 # Mẫu ghi nhận release note
     └── YYYY-MM-DD-vX.X.X.md        # File release note từng phiên bản
 ```
 
 ---
 
-## 3. Real-Time Documentation Rule (Bắt buộc trong PR)
+## 3. Real-Time Documentation Rule (Viết ngay khi sửa code)
 
-Tech Docs trong monorepo là tài liệu sống (**Living Documentation**).
+Dù là dự án cá nhân, việc giữ tài liệu đúng với thực tế sẽ giúp chính bạn không bị quên khi quay lại dự án sau 2 tuần hoặc 2 tháng:
 
-> **BẮT BUỘC:** Nếu một PR làm thay đổi:
-> 1. Kiến trúc hoặc pipeline trong `turbo.json`.
-> 2. Ranh giới, contract hoặc API giữa các app/package (`@repo/types`, `@repo/database`).
-> 3. Cách thức triển khai của bất kỳ app nào trong `apps/*` hoặc shared package trong `packages/*`.
->
-> Thì **việc cập nhật file tương ứng trong `docs/tech/` là điều kiện tiên quyết để PR được Approve**.
-
-Reviewer có trách nhiệm kiểm tra diff của `docs/tech/` tương ứng với diff của source code trong cùng PR.
+> **Quy tắc:** Nếu bạn sửa pipeline trong `turbo.json`, thay đổi API contract trong `@repo/types`, hoặc thay đổi cách thức xử lý worker, hãy cập nhật nhanh 1-2 đoạn trong `docs/tech/` ngay trong nhánh đó trước khi merge.
 
 ---
 
-## 4. Quy trình Changesets trong Monorepo (Tích hợp Turborepo + npm workspaces)
+## 4. Tự động hóa Versioning & Changelog với Changesets
 
-Trong monorepo, `@changesets/cli` quản lý việc bump version độc lập hoặc đồng bộ cho từng app và package.
+Sử dụng `@changesets/cli` kết hợp **Turborepo** và **npm workspaces**:
 
-### 4.1. Cấu hình Chuẩn (`.changeset/config.json`)
-```json
-{
-  "$schema": "https://unpkg.com/@changesets/config/schema.json",
-  "changelog": "@changesets/cli/changelog",
-  "commit": false,
-  "fixed": [],
-  "linked": [],
-  "access": "restricted",
-  "baseBranch": "develop",
-  "updateInternalDependencies": "patch",
-  "ignore": []
-}
-```
-- `"updateInternalDependencies": "patch"`: Tự động bump patch các app tiêu thụ khi một internal package (`@repo/ui`, `@repo/types`) có version mới.
-
-### 4.2. Developer Workflow với Changeset
-Khi developer hoàn thành code trong branch:
+### 4.1. Cách tạo Changeset khi hoàn thành tính năng:
 ```bash
 npx changeset
 ```
-1. **Chọn package chịu ảnh hưởng**: Dùng phím mũi tên và Space để tích chọn đúng app/package đã sửa (ví dụ: `apps/web` và `@repo/ui`).
-2. **Chọn loại SemVer**: `patch` (sửa lỗi), `minor` (tính năng mới tương thích ngược), `major` (breaking change).
-3. **Viết tóm tắt thay đổi**: Mô tả ngắn gọn, rõ ràng.
-4. **Commit file `.changeset/*.md`** được sinh ra vào cùng Pull Request.
+1. Chọn app/package đã sửa (ví dụ: `apps/web` và `@repo/ui`).
+2. Chọn mức SemVer: `patch` (sửa lỗi), `minor` (tính năng mới), `major` (đổi lớn).
+3. Viết 1 câu tóm tắt những gì vừa làm.
+4. Commit file `.changeset/*.md` vào git.
 
-### 4.3. Pipeline Tự động hóa Release qua Turborepo
-Trong root `package.json`:
-```json
-{
-  "scripts": {
-    "version-packages": "changeset version",
-    "release": "turbo run build && changeset publish"
-  }
-}
+### 4.2. Tự động hóa khi Release:
+Khi muốn bump version và sinh CHANGELOG:
+```bash
+npm run version-packages # Tự động chạy changeset version
 ```
-- Khi merge vào `main`, CI chạy `npm run version-packages` để tự động cập nhật `package.json` của từng app/package và tạo `CHANGELOG.md` riêng cho từng workspace.
+Changeset sẽ tự động bump version trong `package.json` của các app/package tương ứng và tạo `CHANGELOG.md` sạch sẽ.
 
 ---
 
-## 5. Quy chuẩn Monorepo Release Notes
+## 5. Mẫu Release Note Tinh gọn cho Dự án Cá nhân
 
-Mỗi đợt phát hành lên Staging hoặc Production phải có một file ghi nhận trong `docs/release-notes/` theo mẫu:
+Khi deploy một phiên bản mới lên server/production, tạo một file trong `docs/release-notes/`:
 
 ```markdown
 # Release Note: [Version / Scope] — [YYYY-MM-DD]
 
-## 1. Tổng quan Release
+## 1. Tổng quan
 - **Ngày phát hành**: YYYY-MM-DD
-- **Target Branch**: `main` (hoặc `staging`)
-- **Jira Milestones**: [PHI-Sprint-14]
-- **Tóm tắt**: Cập nhật tính năng thanh toán trên `apps/web` và tối ưu API trên `apps/api`.
+- **Mục tiêu**: Bổ sung tính năng tạo ảnh bằng model Flux trên `apps/web` và worker.
 
-## 2. Chi tiết theo từng App & Package (Workspace Breakdown)
-### `apps/web` (v1.2.0)
-- **Feat**: Thêm phương thức thanh toán VNPay và Momo.
-- **Fix**: Sửa lỗi crash khi load danh sách giỏ hàng rỗng.
+## 2. Chi tiết theo từng App & Package
+### `apps/web` (v1.1.0)
+- Thêm Prompt Workbench với slider chỉnh CFG và Aspect Ratio.
+- Hiển thị tiến trình gen ảnh realtime qua Server-Sent Events.
 
-### `apps/api` (v2.1.0)
-- **Feat**: Thêm endpoint webhook xử lý thanh toán từ VNPay.
-- **Breaking**: Thay đổi format response của `/api/orders` (đã đồng bộ trong `@repo/types`).
+### `apps/api` (v1.1.0)
+- Thêm endpoint trừ credit nguyên tử trước khi đưa job vào queue.
 
-### `packages/database` (v1.1.0)
-- **Migration**: Chạy file migration `20260928_add_payment_transactions.sql`.
+### `apps/worker` (v1.1.0)
+- Tích hợp Fal.ai API pipeline, tự động upload ảnh kết quả lên Cloudflare R2.
 
-## 3. Quản lý Rủi ro & Tác động Kỹ thuật (Technical Blast Radius)
-- **Database Migration Required**: CÓ (phải chạy `npx turbo run db:migrate` trước khi deploy app).
-- **Environment Variables mới**:
-  - `apps/api`: Bổ sung `VNPAY_SECRET_KEY`, `VNPAY_TMN_CODE`.
-  - `apps/web`: Bổ sung `NEXT_PUBLIC_VNPAY_HOST`.
-- **Breaking Changes & Downstream Impact**: Không ảnh hưởng bên ngoài.
+### `packages/database` (v1.0.1)
+- Migration: `20260928_add_image_generations.sql`.
 
-## 4. Traceability & Bằng chứng
-- **Related PRs**: #102, #105
-- **Changesets**: `.changeset/proud-foxes-jump.md`
-- **CI / Build Verification**: Turborepo build cache PASS 100%.
+## 3. Thao tác Triển khai (Deployment Checklist)
+- [ ] Chạy migration database: `npx turbo run db:migrate`.
+- [ ] Thêm biến môi trường mới vào server: `FAL_KEY`, `R2_SECRET_ACCESS_KEY`.
 ```
 EOF

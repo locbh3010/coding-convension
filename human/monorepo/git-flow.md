@@ -1,49 +1,51 @@
-# Git Flow & Collaboration (Monorepo)
+# Git Flow & Collaboration (Dự án Cá nhân)
 
-> Quy trình Git Flow chuẩn hóa cho hệ thống Monorepo sử dụng **Turborepo** và **npm workspaces**.
+> Quy trình Git Flow tinh gọn, tốc độ cao dành cho **Developer cá nhân (Solo / Indie Dev)** quản lý Monorepo bằng **Turborepo** và **npm workspaces**.
 
 ---
 
-## 1. Standard Flow
+## 1. Luồng Làm việc Tinh gọn (Solo Flow)
+
+Không rườm rà Jira ticket, không chờ đợi xét duyệt đa tầng. Quy trình tập trung vào việc **giữ git history sạch, code không bị regression và ship nhanh**:
 
 ```text
-Jira Task
+Tính năng / Bug cần làm
    ↓
-Create Branch (với scope rõ ràng)
+Tạo Short-lived Branch (theo scope)
    ↓
-Development
+Code & Test cục bộ (Turborepo affected checks)
    ↓
-Local Verification (Turborepo affected checks)
+Commit (Conventional Commits với Scope)
    ↓
-Commit (Conventional Commits with Monorepo Scope)
+Push & Tạo PR (hoặc Self-merge)
    ↓
-Push & Create PR
+CI tự động chạy (Affected-only build & test)
    ↓
-GitHub Actions (Turborepo Affected-only CI & Remote Cache)
+Self-Review (Rà soát checklist cá nhân)
    ↓
-Code Review (Đánh giá Blast Radius)
+Squash & Merge vào main/develop
    ↓
-Approval
-   ↓
-Squash & Merge vào develop
-   ↓
-Post-merge / Sync-back (nếu là hotfix)
-   ↓
-Delete Branch
+Xóa nhánh & Deploy
 ```
 
 ---
 
-## 2. Branch Naming Convention với Scope
+## 2. Quy ước Đặt tên Nhánh Tinh gọn (Branch Naming)
 
-Trong Monorepo, tên branch bắt buộc chứa **Scope** (tên app hoặc package chịu ảnh hưởng) để các thành viên nhận biết ngay phạm vi thay đổi:
+Không dùng Task ID của Jira. Tên nhánh ngắn gọn, phản ánh rõ **loại thay đổi** và **app/package chịu tác động**:
 
 ### Format:
 ```text
-<prefix>/<task-id>-<scope>-<short-description>
+<type>/<scope>-<short-description>
 ```
 
-### Các Scope tiêu biểu:
+### Các Prefix (`<type>`):
+- `feat/`: Tính năng mới
+- `fix/`: Sửa lỗi
+- `refactor/`: Tái cấu trúc mã nguồn
+- `chore/`: Nâng cấp package, config, tooling
+
+### Các Scope (`<scope>`):
 - `web`: `apps/web`
 - `admin`: `apps/admin`
 - `api`: `apps/api`
@@ -51,70 +53,55 @@ Trong Monorepo, tên branch bắt buộc chứa **Scope** (tên app hoặc packa
 - `ui`: `packages/ui`
 - `db`: `packages/database`
 - `types`: `packages/types`
-- `repo`: Toàn bộ repository hoặc root tooling
+- `repo`: Toàn bộ monorepo (root `package.json`, `turbo.json`)
 
-### Ví dụ chuẩn:
+### Ví dụ chuẩn cho dự án cá nhân:
 ```text
-feature/phi-101-web-checkout-flow
-fix/phi-102-api-jwt-validation
-refactor/phi-103-ui-modal-component
-chore/phi-104-db-add-order-index
-chore/phi-105-repo-update-turbo-v2
+feat/web-prompt-workbench
+feat/api-credit-deduction
+feat/worker-fal-ai-handler
+fix/api-token-expiration
+refactor/ui-gallery-masonry
+chore/db-add-generation-indexes
+chore/repo-upgrade-turbo-v2
 ```
 
 ---
 
-## 3. Quản lý Blast Radius (Bán kính ảnh hưởng) trong PR
+## 3. Quản lý Nhánh Chính (Branch Model)
 
-Trong Monorepo, mức độ rủi ro của PR phụ thuộc vào vị trí file thay đổi:
+Tùy vào quy mô và nhu cầu deploy preview, chọn 1 trong 2 mô hình sau:
 
-| Vùng thay đổi | Mức độ Blast Radius | Yêu cầu kiểm thử & Review |
-|---|---|---|
-| **Chỉ thay đổi trong `apps/*`** | **Thấp** (Isolated) | Chỉ cần test và verify app đó. Không ảnh hưởng các app khác. |
-| **Thay đổi trong `packages/ui`** | **Trung bình** | Phải verify giao diện trên cả `apps/web` và `apps/admin`. |
-| **Thay đổi trong `packages/types`** | **Cao** | Bắt buộc chạy `npx turbo run typecheck` trên toàn bộ monorepo. |
-| **Thay đổi trong `packages/database`** | **Rất cao** (Critical) | Phải kiểm tra migration, tính tương thích ngược, verify cả `api` và `worker`. |
-| **Thay đổi Root configs / `turbo.json`** | **Toàn diện** | Cần Tech Lead review và full CI pass toàn bộ repository. |
+### Lựa chọn A: 1 Nhánh Duy nhất (`main`) — Khuyến nghị cho dự án cá nhân tốc độ cao
+- Mọi nhánh tính năng merge trực tiếp vào `main`.
+- `main` luôn ở trạng thái production-ready và tự động deploy (Vercel / Cloud Run).
+- Rất nhanh, không cần sync-back giữa các nhánh.
+
+### Lựa chọn B: 2 Nhánh (`develop` + `main`) — Dành cho dự án có môi trường Staging/Preview
+- `develop`: Nơi tích hợp code đang phát triển hàng ngày.
+- `main`: Chỉ merge từ `develop` khi sẵn sàng release production.
+- **Nếu có `hotfix/*` merge vào `main`**: Tự merge ngay lại vào `develop` để tránh mất code.
 
 ---
 
-## 4. Tối ưu CI/CD với Turborepo (Affected-only Pipeline)
+## 4. Tối ưu Thời gian với Turborepo Filter
 
-Để CI/CD chạy nhanh và tiết kiệm tài nguyên, GitHub Actions không build lại toàn bộ repository mà sử dụng cờ lọc của Turborepo:
+Một mình làm cả Frontend lẫn Backend, bạn không muốn mỗi lần gõ commit phải chờ build toàn bộ cả repo. Hãy tận dụng Turborepo Filter:
 
 ```bash
-# Chỉ lint, typecheck, test và build các app/package bị thay đổi hoặc phụ thuộc vào code thay đổi
-npx turbo run lint typecheck test build --filter=...[origin/develop]
+# Chỉ test và build những gì vừa sửa so với nhánh chính
+npx turbo run lint typecheck test build --filter=...[origin/main]
+
+# Chỉ chạy dev app đang code dở
+npx turbo run dev --filter=web
 ```
 
-- Khi một PR chỉ sửa `apps/web`, CI sẽ bỏ qua `apps/api` và `apps/worker`.
-- Khi một PR sửa `@repo/ui`, CI sẽ tự động build `@repo/ui` cùng các app tiêu thụ nó (`apps/web`, `apps/admin`).
-
 ---
 
-## 5. Chiến lược Merge (Merge Strategy)
+## 5. Chiến lược Merge: Luôn dùng "Squash and Merge"
 
-1. **Feature / Bugfix vào `develop`**:
-   - **Bắt buộc dùng `Squash and merge`**.
-   - Commit message của PR khi squash phải tuân thủ chuẩn Conventional Commits (ví dụ: `feat(web): add checkout flow (#101)`).
-   - Giúp lịch sử git của `develop` luôn phẳng, sạch và dễ revert khi cần.
-2. **Release từ `develop` vào `main`**:
-   - Dùng **Merge Commit** (hoặc Fast-Forward) để lưu vết lịch sử release version.
+Dù là dự án cá nhân, **tuyệt đối không dùng merge commit thông thường vào nhánh chính**.
 
----
-
-## 6. Cơ chế Hotfix Sync-back (Bắt buộc)
-
-Khi phát sinh sự cố production và xử lý qua `hotfix/*`:
-
-1. Tạo branch `hotfix/phi-xxx-<scope>-<desc>` từ `main`.
-2. Sửa lỗi, test và merge vào `main` (sau khi Tech Lead approve).
-3. **Ngay sau khi merge vào `main`, bắt buộc sync-back vào `develop`**:
-   ```bash
-   git checkout develop
-   git pull origin develop
-   git merge origin/main
-   git push origin develop
-   ```
-   *Quy tắc này nhằm loại trừ nguy cơ mất code hotfix khi đợt release tiếp theo từ `develop` ghi đè lên `main`.*
+- **Bắt buộc dùng Squash and Merge**: Gộp toàn bộ 5-10 commit vụn vặt trong quá trình dev ("fix typo", "test css") thành **1 commit duy nhất chuẩn Conventional Commits** trên nhánh chính.
+- Kết quả: Lịch sử git của bạn luôn đẹp như một cuốn sách, cực kỳ dễ tìm lại lỗi hoặc revert khi cần.
 EOF
